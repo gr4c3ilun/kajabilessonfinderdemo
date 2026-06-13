@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthcare Training Finder</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:       #0f1220;
+  --s1:       #161d35;
+  --s2:       #1c2540;
+  --accent:   #306BAC;
+  --accent-l: #6F9CEB;
+  --accent-d: rgba(48,107,172,0.15);
+  --accent-b: rgba(48,107,172,0.35);
+  --periwinkle: #918EF4;
+  --hi:       #ffffff;
+  --md:       rgba(255,255,255,0.75);
+  --lo:       rgba(255,255,255,0.38);
+  --bd:       rgba(255,255,255,0.08);
+  --bdh:      rgba(255,255,255,0.15);
+}
+
+body {
+  background: var(--bg);
+  color: var(--hi);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.hd {
+  padding: 56px 40px 44px;
+  text-align: center;
+  border-bottom: 1px solid var(--bd);
+  position: relative;
+  overflow: hidden;
+}
+.hd::before {
+  content: '';
+  position: absolute;
+  top: -100px; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 340px;
+  background: radial-gradient(ellipse, rgba(48,107,172,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-l);
+  margin-bottom: 18px;
+  display: block;
+}
+
+.hd h1 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--hi);
+  margin-bottom: 14px;
+}
+.hd h1 em {
+  font-style: normal;
+  color: var(--accent-l);
+}
+
+.hd p {
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--md);
+  max-width: 500px;
+  margin: 0 auto 32px;
+  line-height: 1.75;
+}
+
+/* ── SEARCH ── */
+.swrap {
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+  position: relative;
+}
+.swrap svg {
+  position: absolute;
+  left: 20px; top: 50%;
+  transform: translateY(-50%);
+  width: 20px; height: 20px;
+  stroke: var(--accent-l); fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  pointer-events: none;
+}
+.sinput {
+  width: 100%;
+  padding: 17px 24px 17px 54px;
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  background: var(--s2);
+  border: 1.5px solid var(--accent-b);
+  border-radius: 50px;
+  color: var(--hi);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.sinput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(48,107,172,0.14);
+}
+.sinput::placeholder {
+  color: var(--lo);
+  font-weight: 300;
+}
+
+/* ── MAIN ── */
+.main {
+  padding: 32px 40px 64px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Stats bar + filters ── */
+.bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.cnt {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--lo);
+  letter-spacing: 0.04em;
+  padding-top: 6px;
+}
+.cnt strong {
+  font-weight: 700;
+  color: var(--accent-l);
+}
+
+/* Filter chips */
+.frow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chip {
+  padding: 7px 18px;
+  border-radius: 50px;
+  border: 1px solid var(--bdh);
+  background: transparent;
+  font-size: 12px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  color: var(--md);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--accent-l); color: var(--accent-l); }
+.chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ── CARD GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--s1);
+  border: 1px solid var(--bd);
+  border-radius: 16px;
+  padding: 26px 28px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+  align-self: start;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(180deg, var(--accent), var(--periwinkle));
+  border-radius: 16px 0 0 16px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.card:hover { border-color: var(--accent-b); box-shadow: 0 4px 24px rgba(48,107,172,0.12); }
+.card:hover::before { opacity: 1; }
+
+.ctop {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.ptag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-d);
+  color: var(--accent-l);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 50px;
+  border: 1px solid var(--accent-b);
+  line-height: 1.4;
+}
+.ptag::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent-l);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cpill {
+  display: inline-flex;
+  background: rgba(145,142,244,0.1);
+  color: var(--periwinkle);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 50px;
+  border: 1px solid rgba(145,142,244,0.25);
+  white-space: nowrap;
+}
+
+.ltitle {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--hi);
+  margin-bottom: 6px;
+  line-height: 1.25;
+}
+
+.clabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lo);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.clabel span { color: var(--accent-l); }
+
+.ov {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--md);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+
+.togbtn {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--lo);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  transition: color 0.15s;
+}
+.togbtn:hover { color: var(--accent-l); }
+.togbtn.open  { color: var(--accent-l); }
+.togbtn .arr  { transition: transform 0.2s; font-size: 10px; }
+.togbtn.open .arr { transform: rotate(180deg); }
+
+.modbox {
+  display: none;
+  background: rgba(48,107,172,0.07);
+  border-left: 2px solid var(--accent-b);
+  padding: 12px 18px;
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--md);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+.modbox.open { display: block; }
+
+.cfoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--bd);
+}
+.fnote {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--lo);
+}
+
+.gobtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 11px 22px;
+  border-radius: 50px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+}
+.gobtn:hover { background: var(--accent-l); transform: translateY(-1px); }
+.gobtn svg {
+  width: 13px; height: 13px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2.5; stroke-linecap: round;
+}
+.gobtn.disabled {
+  background: transparent;
+  border: 1.5px solid var(--accent-b);
+  color: var(--accent-l);
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center;
+  padding: 72px 24px;
+  display: none;
+}
+.empty.show { display: block; }
+.empty h3 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--md);
+  margin-bottom: 10px;
+}
+.empty p {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--lo);
+  line-height: 1.7;
+}
+
+/* Highlight */
+mark {
+  background: rgba(111,156,235,0.2);
+  color: var(--accent-l);
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+/* ── PORTFOLIO NOTICE ── */
+.notice {
+  background: rgba(145,142,244,0.08);
+  border: 1px solid rgba(145,142,244,0.2);
+  border-radius: 12px;
+  padding: 14px 22px;
+  margin-bottom: 28px;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--md);
+  text-align: center;
+  line-height: 1.6;
+}
+.notice strong {
+  color: var(--periwinkle);
+  font-weight: 600;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 780px) {
+  .hd { padding: 40px 20px 32px; }
+  .hd h1 { font-size: 34px; }
+  .main { padding: 24px 16px 48px; }
+  .card { padding: 20px 20px; border-radius: 12px; }
+  .grid { grid-template-columns: 1fr; }
+  .ov   { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="hd">
+    <span class="eyebrow">Healthcare Training Platform</span>
+    <h1>Find the training for<br><em>your clinical challenge</em></h1>
+    <p>Search by topic, skill, or area of practice. Find the right module in seconds without navigating the full course catalog.</p>
+
+    <div class="swrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="sinput" type="text" id="hc-search"
+             placeholder="e.g. medication safety, hand hygiene, patient communication…"
+             autocomplete="off">
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="notice">
+      <strong>Portfolio demo.</strong> This is a conceptual representation. Course links are inactive. Content has been adapted for illustration purposes.
+    </div>
+
+    <!-- Stats + filters -->
+    <div class="bar">
+      <div class="cnt" id="hc-cnt"></div>
+      <div class="frow" id="hc-filters"></div>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid" id="hc-grid"></div>
+
+    <!-- Empty -->
+    <div class="empty" id="hc-empty">
+      <h3>No modules found</h3>
+      <p>Try different keywords or a broader search term.</p>
+    </div>
+
+  </div>
+
+<script>
+(function () {
+
+  const DATA = [
+    {
+      problem:    "Medication Errors",
+      course:     "Patient Safety Essentials",
+      course_ov:  "Core safety protocols for clinical staff covering medication management, infection control, and adverse event reporting. Designed for new hires and annual recertification across all patient-facing roles.",
+      lesson:     "Safe Medication Administration",
+      lesson_ov:  "Apply the five rights of medication administration to reduce error risk at the point of care. Identify high-alert medications, verify patient identity, and document accurately in the clinical record.",
+      keywords:   ["medication", "drug", "administration", "dosage", "safety", "error", "pharmacy"]
+    },
+    {
+      problem:    "Infection Control",
+      course:     "Patient Safety Essentials",
+      course_ov:  "Core safety protocols for clinical staff covering medication management, infection control, and adverse event reporting. Designed for new hires and annual recertification across all patient-facing roles.",
+      lesson:     "Hand Hygiene and PPE Compliance",
+      lesson_ov:  "Understand when and how to apply hand hygiene protocols and select appropriate personal protective equipment. Practice correct donning and doffing sequences to prevent cross-contamination in clinical environments.",
+      keywords:   ["infection", "hygiene", "PPE", "gloves", "contamination", "prevention", "hand washing"]
+    },
+    {
+      problem:    "Patient Communication",
+      course:     "Clinical Communication Skills",
+      course_ov:  "Build communication skills that improve patient understanding, satisfaction, and adherence. Covers health literacy, active listening, difficult conversations, and documentation of patient interactions.",
+      lesson:     "Communicating with Low Health Literacy Patients",
+      lesson_ov:  "Adapt clinical language for patients with limited health literacy using plain language techniques, teach-back methods, and visual aids. Reduce misunderstanding at discharge and improve treatment adherence.",
+      keywords:   ["communication", "patient", "literacy", "language", "teach-back", "discharge", "understanding"]
+    },
+    {
+      problem:    "Patient Communication",
+      course:     "Clinical Communication Skills",
+      course_ov:  "Build communication skills that improve patient understanding, satisfaction, and adherence. Covers health literacy, active listening, difficult conversations, and documentation of patient interactions.",
+      lesson:     "Delivering Difficult News",
+      lesson_ov:  "Use structured frameworks to deliver difficult diagnoses or treatment changes with clarity and empathy. Practice balancing honesty with emotional support while documenting patient and family responses accurately.",
+      keywords:   ["difficult news", "diagnosis", "empathy", "family", "emotional", "support", "conversation"]
+    },
+    {
+      problem:    "Compliance and Reporting",
+      course:     "Regulatory Compliance Fundamentals",
+      course_ov:  "Mandatory annual training covering HIPAA, incident reporting, workplace safety, and ethical standards. Required for all staff across clinical and administrative roles.",
+      lesson:     "HIPAA and Patient Privacy",
+      lesson_ov:  "Identify what constitutes protected health information and apply minimum necessary standards in daily practice. Recognize reportable privacy breaches and follow the correct escalation protocol.",
+      keywords:   ["HIPAA", "privacy", "PHI", "compliance", "breach", "data", "confidential", "regulation"]
+    },
+    {
+      problem:    "Compliance and Reporting",
+      course:     "Regulatory Compliance Fundamentals",
+      course_ov:  "Mandatory annual training covering HIPAA, incident reporting, workplace safety, and ethical standards. Required for all staff across clinical and administrative roles.",
+      lesson:     "Adverse Event and Near-Miss Reporting",
+      lesson_ov:  "Understand the organization's reporting system for adverse events and near-misses. Document incidents accurately, identify contributing factors, and participate in root cause analysis to prevent recurrence.",
+      keywords:   ["incident", "report", "adverse event", "near-miss", "documentation", "root cause", "safety"]
+    },
+    {
+      problem:    "Clinical Procedures",
+      course:     "Clinical Competency Program",
+      course_ov:  "Skill-based training for clinical staff covering core procedures, equipment operation, and emergency response. Includes scenario-based practice and competency checkoffs.",
+      lesson:     "IV Line Insertion and Maintenance",
+      lesson_ov:  "Review site selection criteria, insertion technique, and daily maintenance requirements for peripheral IV lines. Identify early signs of infiltration and phlebitis and apply the correct intervention protocol.",
+      keywords:   ["IV", "intravenous", "catheter", "insertion", "venipuncture", "line", "maintenance"]
+    },
+    {
+      problem:    "Emergency Response",
+      course:     "Clinical Competency Program",
+      course_ov:  "Skill-based training for clinical staff covering core procedures, equipment operation, and emergency response. Includes scenario-based practice and competency checkoffs.",
+      lesson:     "Code Blue Response Protocol",
+      lesson_ov:  "Walk through the step-by-step Code Blue activation and response sequence. Clarify individual roles within the response team, practice handoff communication, and review post-event documentation requirements.",
+      keywords:   ["code blue", "emergency", "CPR", "resuscitation", "response", "cardiac arrest", "protocol"]
+    }
+  ];
+
+  const FILTERS = ["All", "Medication Errors", "Infection Control", "Patient Communication", "Compliance and Reporting", "Clinical Procedures", "Emergency Response"];
+
+  let activeFilter = "All";
+
+  const searchEl = document.getElementById("hc-search");
+  const filtsEl  = document.getElementById("hc-filters");
+  const gridEl   = document.getElementById("hc-grid");
+  const emptyEl  = document.getElementById("hc-empty");
+  const cntEl    = document.getElementById("hc-cnt");
+
+  FILTERS.forEach(f => {
+    const btn = document.createElement("button");
+    btn.className = "chip" + (f === "All" ? " on" : "");
+    btn.textContent = f === "All" ? "All Modules" : f;
+    btn.addEventListener("click", () => {
+      activeFilter = f;
+      document.querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+      btn.classList.add("on");
+      render();
+    });
+    filtsEl.appendChild(btn);
+  });
+
+  function score(item, q) {
+    if (!q) return 1;
+    const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+    const fields = [
+      { val: item.lesson,     w: 4 },
+      { val: item.problem,    w: 3 },
+      { val: item.lesson_ov,  w: 2 },
+      { val: (item.keywords || []).join(" "), w: 3 },
+      { val: item.course,     w: 1 },
+      { val: item.course_ov,  w: 1 }
+    ];
+    let total = 0;
+    for (const { val, w } of fields) {
+      total += words.filter(word => val.toLowerCase().includes(word)).length * w;
+    }
+    return total;
+  }
+
+  function hl(text, q) {
+    if (!q || !text) return text;
+    const esc = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return text.replace(new RegExp(`(${esc})`, "gi"), "<mark>$1</mark>");
+  }
+
+  function render() {
+    const q = searchEl.value.trim();
+    let data = [...DATA];
+
+    if (activeFilter !== "All") {
+      data = data.filter(d => d.problem === activeFilter);
+    }
+    if (q) {
+      data = data.map(d => ({ ...d, _s: score(d, q) }))
+                 .filter(d => d._s > 0)
+                 .sort((a, b) => b._s - a._s);
+    }
+
+    gridEl.innerHTML = "";
+
+    if (data.length === 0) {
+      emptyEl.classList.add("show");
+      cntEl.innerHTML = "";
+      return;
+    }
+
+    emptyEl.classList.remove("show");
+    cntEl.innerHTML = `<strong>${data.length}</strong> module${data.length !== 1 ? "s" : ""} found`;
+
+    data.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="ctop">
+          <span class="ptag">${hl(item.problem, q)}</span>
+          <span class="cpill">${hl(item.course, q)}</span>
+        </div>
+        <div class="ltitle">${hl(item.lesson, q)}</div>
+        <div class="clabel">Module: <span>${hl(item.course, q)}</span></div>
+        <div class="ov">${hl(item.lesson_ov, q)}</div>
+        <button class="togbtn"
+          onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+          About this course <span class="arr">▼</span>
+        </button>
+        <div class="modbox">${hl(item.course_ov, q)}</div>
+        <div class="cfoot">
+          <span class="fnote"> Demo only - link inactive</span>
+          <button class="gobtn disabled">
+            View module
+            <svg viewBox="0 0 24 24">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>`;
+      gridEl.appendChild(card);
+    });
+  }
+
+  render();
+  searchEl.addEventListener("input", render);
+
+})();
+</script>
+</body>
+</html>
